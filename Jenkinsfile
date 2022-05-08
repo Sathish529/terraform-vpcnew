@@ -1,36 +1,26 @@
 pipeline {
-environment {
-registry = "sathish529"
-registryCredential = 'dockercredentials'
-dockerImage = 'terraform-vpcnew'
-}
-agent any
-stages {
-stage('Cloning our Git') {
-steps {
-git 'https://github.com/Sathish529/terraform-vpcnew'
-}
-}
-stage('Building our image') {
-steps{
-script {
-dockerNow = docker.build registry+"/"+ dockerImage + ":$BUILD_NUMBER"
-}
-}
-}
-stage('Deploy our image') {
-steps{
-script {
-docker.withRegistry( '', registryCredential ) {
-dockerNow.push()
-}
-}
-}
-}
-stage('Cleaning up') {
-steps{
-sh "docker rmi $registry/$dockerImage:$BUILD_NUMBER"
-}
-}
-}
+  agent any
+  tools {
+      terraform "Terraform1.0.0"
+  }
+
+  stages {
+    stage('Git Checkout') {
+      steps {
+        git clone 'https://github.com/Sathish529/terraform-vpcnew.git'
+      }
+    }
+
+    stage('Terraform Init') {
+      steps {
+        sh label: '', script: 'terraform init'
+      }
+    }
+
+    stage('Terraform apply') {
+      steps {
+        sh label: '', script: 'terraform apply --auto-approve'
+      }
+    }
+  }
 }
