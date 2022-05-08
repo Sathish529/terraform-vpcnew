@@ -7,7 +7,7 @@ pipeline {
   stages {
     stage('Git Checkout') {
       steps {
-        git clone 'https://github.com/Sathish529/terraform-vpcnew.git'
+        git 'https://github.com/Sathish529/terraform-vpcnew.git'
       }
     }
 
